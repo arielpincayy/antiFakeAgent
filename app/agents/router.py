@@ -2,35 +2,41 @@ from .agents import Agents
 
 
 def router(query: str, memory: list, agents: Agents) -> str:
-        if not memory:
-            return "research"
+    if not memory:
+        return "research"
 
-        memory_topics = "\n".join([m[0] for m in memory])
-        prompt = f"""
-        The user asked the following question:
+    memory_summary = ""
+    for i, m in enumerate(memory):
+        memory_summary += f"- Topic/Paper {i+1}: {m[0]}\n"
 
-        "{query}"
+    prompt = f"""
+    USER QUERY: "{query}"
 
-        These are the previously researched topics:
+    AVAILABLE DATA IN MEMORY:
+    {memory_summary}
 
-        {memory_topics}
+    DECISION CRITERIA:
+    - Respond 'memory' if the user is asking for:
+        * Specific details of the papers above (citations, links, methodology, authors).
+        * A summary, comparison, or formatting change of the existing data.
+        * Any question where the answer is likely contained in the topics listed.
+    - Respond 'research' if the user is asking for:
+        * A completely new topic not mentioned above.
+        * Information that requires updated real-time data or a broader search.
+        * A deep dive into a concept that was only mentioned briefly without details.
 
-        Decide whether the question:
-        1. Can be answered using the already researched topics.
-        2. Requires a new academic search.
+    RESPONSE (ONLY 'memory' OR 'research'):
+    """
 
-        Respond with ONLY one word:
+    decision = agents.chat(
+        messages=[
+            {
+                "role": "system", 
+                "content": "You are a precise Intent Classifier for a Research Assistant. Your goal is to minimize redundant web searches by identifying if the data is already in the system memory."
+            },
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0 # Crucial para que no haya variaciones
+    )
 
-        memory
-        research
-        """
-
-        decision = agents.chat(
-            messages=[
-                {"role": "system", "content": "You are an intent classifier."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0
-        )
-
-        return "memory" if "memory" in decision.strip().lower() else "research"
+    return "memory" if "memory" in decision.strip().lower() else "research"

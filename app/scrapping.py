@@ -9,8 +9,6 @@ class Scrapping:
         self.all_papers = []
 
     def collect_results(self, query: str, limit_per_source: int = 5) -> List[Dict[str, Any]]:
-            print(f"🔍 Buscando '{query}' en múltiples bases de datos...")
-    
             # 1. ArXiv
             try:
                 for p in search_arxiv(query, max_results=limit_per_source):
