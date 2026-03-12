@@ -1,0 +1,12 @@
+# LLM Providers
+openai
+groq
+ollama
+
+# Web Scraping / Search APIs
+requests
+google-search-results
+
+# CLI & Utilities
+python-dotenv
+rich
