@@ -61,36 +61,69 @@ def analyze_single_paper(query: str, paper: Dict[str, Any], agent) -> str:
 
     prompt = f"""
     User Research Topic: "{query}"
-
+    
     PAPER:
     TITLE: {paper['title']}
     SOURCE: {paper['source']}
     CITATIONS: {paper['citations']}
     SUMMARY: {summary}
     LINK: {paper['link']}
-
+    
     TASK:
     Analyze this paper individually as an expert researcher.
-
-    OUTPUT FORMAT (Markdown):
-    - Title:
-    - Methodology:
-    - Key Results:
-    - Strengths:
-    - Weaknesses:
-    - Relevance to Research Topic:
-    - Key Concepts / Keywords:
+    
+    STRICT OUTPUT FORMAT (Markdown):
+    
+    Follow EXACTLY this structure. Do NOT add extra sections.
+    
+    ### Title
+    - <paper title>
+    
+    ### Methodology
+    - <bullet point>
+    - <bullet point>
+    
+    ### Key Results
+    - <bullet point>
+    - <bullet point>
+    
+    ### Strengths
+    - <bullet point>
+    - <bullet point>
+    
+    ### Weaknesses
+    - <bullet point>
+    - <bullet point>
+    
+    ### Relevance to Research Topic
+    - <bullet point>
+    - <bullet point>
+    
+    ### Key Concepts / Keywords
+    - <keyword>
+    - <keyword>
+    
+    ### Link
+    - {paper['link']}
+    
+    FORMAT RULES (VERY IMPORTANT):
+    - Use ONLY "-" for bullet points (unordered lists)
+    - DO NOT use numbered lists (no "1.", "2.", etc.)
+    - DO NOT write paragraphs under sections
+    - Every section MUST contain bullet points
+    - Keep formatting consistent across all papers
+    - Do NOT add explanations outside the structure
     """
 
     return agent.chat(
         messages=[
             {
                 "role": "system",
-                "content": "You are a Senior Research Analyst. You analyze one paper at a time with deep academic rigor."
+                "content": "You are a strict academic formatter. You ALWAYS follow the exact markdown structure and formatting rules."
             },
             {"role": "user", "content": prompt}
         ],
-        temperature=0.2
+        temperature=0
     )
 
 def analyzer(query: str, papers: List[Dict[str, Any]], agent) -> str:
@@ -100,12 +133,12 @@ def analyzer(query: str, papers: List[Dict[str, Any]], agent) -> str:
     
     print("Analyzing papers one by one...\n")
 
-    individual_analyses = []
+    individual_analyses = ""
 
     for i, paper in enumerate(papers):
         print(f"Analyzing paper {i+1}/{len(papers)}...")
         analysis = analyze_single_paper(query, paper, agent)
-        individual_analyses.append(f"--- PAPER {i} ---\n{analysis}")
+        individual_analyses += f"# PAPER {i}\n{analysis}\n\n"
 
     combined_context = "\n\n".join(individual_analyses)
 
@@ -119,15 +152,7 @@ def analyzer(query: str, papers: List[Dict[str, Any]], agent) -> str:
     Based on the individual analyses, create a high-quality literature review.
 
     OUTPUT:
-    1. A Markdown table with the most important papers (3–10 max)
-       Columns:
-       - Paper
-       - Methodology
-       - Key Results
-       - Relevance
-       - Link
-
-    2. A 2-paragraph "State of the Art" synthesis:
+    1. A 2-paragraph "State of the Art" synthesis:
        - Trends
        - Common methods
        - Research gaps
@@ -135,7 +160,7 @@ def analyzer(query: str, papers: List[Dict[str, Any]], agent) -> str:
 
     print("\nGenerating final synthesis...\n")
 
-    return agent.chat(
+    synthesis_response = agent.chat(
         messages=[
             {
                 "role": "system",
@@ -145,3 +170,5 @@ def analyzer(query: str, papers: List[Dict[str, Any]], agent) -> str:
         ],
         temperature=0.2
     )
+
+    return individual_analyses + " \n" + synthesis_response

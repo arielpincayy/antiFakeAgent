@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+import os
 
 load_dotenv()  # Carga las variables de entorno desde el archivo .env
 
@@ -8,6 +9,7 @@ from rich.console import Console
 from rich.markdown import Markdown
 
 if __name__ == "__main__":
+    os.system('cls' if os.name == 'nt' else 'clear')
     console = Console()
     agent = ResearchAgent()
     
