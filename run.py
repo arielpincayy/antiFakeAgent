@@ -9,9 +9,9 @@ from rich.console import Console
 from rich.markdown import Markdown
 
 if __name__ == "__main__":
+    agent = ResearchAgent()
     os.system('cls' if os.name == 'nt' else 'clear')
     console = Console()
-    agent = ResearchAgent()
     
     colors = ["red", "yellow", "green", "cyan", "blue", "magenta"]
     

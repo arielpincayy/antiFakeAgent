@@ -1,52 +1,18 @@
-import os
-import openai
-import ollama
-from groq import Groq
+from langchain.chat_models import init_chat_model
+
+from typing import List, Dict
 
 class Agents:
-    def __init__(self, provider: str = "openai", model: str = "gpt-4-turbo-preview"):
-        self.provider = provider
-        self.model = model
-
-        if provider == "openai":
-            self.client = openai.OpenAI(api_key=os.environ["OPENAI"])
-        elif provider == "groq":
-            self.client = Groq(api_key=os.environ["GROQ"])
-
-    def chat(self, messages, temperature=0.3):
-        if self.provider == "openai":
-            return self._chat_openai(messages, temperature)
-        elif self.provider == "ollama":
-            return self._chat_ollama(messages)
-        elif self.provider == "groq":
-            return self._chat_groq(messages, temperature)
-        else:
-            raise ValueError("Proveedor no soportado")
-
-    def _chat_openai(self, messages, temperature):
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-            temperature=temperature
+    def __init__(self, provider: str = "openai", model: str = "gpt-4o-mini", temperature: float = 0, 
+                 top_p: float = 1, max_tokens: int = None):
+        
+        self.llm = init_chat_model(
+            model,
+            model_provider=provider,
+            temperature=temperature,
+            top_p=top_p,
+            max_tokens=max_tokens,
         )
 
-        return response.choices[0].message.content
-
-    def _chat_ollama(self, messages):
-
-        response = ollama.chat(
-            model=self.model,
-            messages=messages
-        )
-
-        return response["message"]["content"]
-    
-    def _chat_groq(self, messages, temperature):
-
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-            temperature=temperature
-        )
-
-        return response.choices[0].message.content
+    def invoke(self, messages: List[Dict[str, str]]) -> str:
+        return self.llm.invoke(messages).content

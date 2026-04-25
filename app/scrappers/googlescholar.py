@@ -79,3 +79,50 @@ def search_scholar(query: str = "climate misinformation",
         })
 
     return papers
+
+def search_google(query: str, num_results: int = 5) -> List[Dict[str, Any]]:
+
+    """
+    Search for relevant web pages using Google Search via SerpApi.
+    Parameters
+    ----------
+    query : str
+        Search query string.
+        Example: "climate misinformation"
+    num_results : int
+        Number of results to retrieve from Google Search.
+    Returns
+    -------
+    List[Dict[str, Any]]
+        A list of dictionaries where each dictionary contains:
+            - "title": str | None
+            - "url": str | None
+            - "snippet": str | None
+            - "source": str (always "web")
+        Returns an empty list if:
+            - API key is missing
+            - Request fails
+            - No results are found
+    """
+
+    params: Dict[str, Any] = {
+        "engine": "google",
+        "q": query,
+        "api_key": SERP_API_KEY,
+        "num": num_results
+    }
+
+    search: GoogleSearch = GoogleSearch(params)
+    results: Dict[str, Any] = search.get_dict()
+
+    pages: List[Dict[str, Any]] = []
+
+    for r in results.get("organic_results", []):
+        pages.append({
+            "title": r.get("title"),
+            "url": r.get("link"),
+            "snippet": r.get("snippet"),
+            "source": "web"
+        })
+
+    return pages
