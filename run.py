@@ -23,7 +23,7 @@ if __name__ == "__main__":
     with open("app/ascii_art/logo.txt") as f:
         console.print(f.read(), style=colors[3])
 
-    print("What topic do you want to investigate?: \n")
+    print("Let me check a Fact: \n")
     while(True):
         topic = input("User: ")
         print("\n" + "="*50)

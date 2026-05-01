@@ -4,12 +4,11 @@ from .scrappers import search_openalex
 
 from typing import List, Dict, Any
 
-def collect_results(query: str, bases: List[str] = ["arXiv", "Google Scholar", "OpenAlex", "Web"], 
-                    limit_per_source: int = 5) -> List[Dict[str, Any]]:
+def collect_results(query: str, base: str, limit_per_source: int = 5) -> List[Dict[str, Any]]:
         
         all_papers: List[Dict[str, Any]] = []
         # 1. ArXiv
-        if "arXiv" in bases:
+        if "arxiv" == base:
             try:
                 for p in search_arxiv(query, max_results=limit_per_source):
                     all_papers.append({
@@ -23,7 +22,7 @@ def collect_results(query: str, bases: List[str] = ["arXiv", "Google Scholar", "
                 print(f"⚠️ Error en ArXiv: {e}")
 
         # 2. Google Scholar
-        if "Google Scholar" in bases:
+        if "google_scholar" == base:
             try:
                 for p in search_scholar(query, num_results=limit_per_source):
                     all_papers.append({
@@ -37,7 +36,7 @@ def collect_results(query: str, bases: List[str] = ["arXiv", "Google Scholar", "
                 print(f"⚠️ Error en Google Scholar: {e}")
 
         # 3. OpenAlex
-        if "OpenAlex" in bases:
+        if "openalex" == base:
             try:
                 for p in search_openalex(query, per_page=limit_per_source):
                     all_papers.append({
@@ -51,7 +50,7 @@ def collect_results(query: str, bases: List[str] = ["arXiv", "Google Scholar", "
                 print(f"⚠️ Error en OpenAlex: {e}")
         
         # 4. Google Web Search
-        if "Web" in bases:
+        if "google_web" == base:
             try:
                 for p in search_google(query, num_results=limit_per_source):
                     all_papers.append({

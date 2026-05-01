@@ -1,7 +1,9 @@
 from .agents import Agents
+from typing import List
 
 
-def router_bases(query: str, agents: Agents) -> str:
+
+def router_bases(query: str, agent: Agents) -> str:
     prompt = f"""
     USER QUERY: "{query}"
     
@@ -39,15 +41,14 @@ def router_bases(query: str, agents: Agents) -> str:
     'web search' o 'scientific'
     """
 
-    decision = agents.invoke(
+    decision = agent.invoke(
         messages=[
             {
                 "role": "system", 
                 "content": "Eres un agente de enrutamiento que decide si una consulta del usuario debe ser respondida por un agente de búsqueda web o por un agente de investigación científica. Tu tarea es analizar la consulta y determinar si es más adecuada para una búsqueda general en la web o si requiere una investigación más profunda y técnica. Responde solo con 'web search' o 'scientific' según corresponda, sin proporcionar explicaciones adicionales."
             },
             {"role": "user", "content": prompt}
-        ],
-        temperature=0 # Crucial para que no haya variaciones
+        ]
     )
 
-    return "web search" if "web search" in decision.strip().lower() else "scientific"
+    return "web_search" if "web search" in decision.strip().lower() else "scientific"
