@@ -16,7 +16,8 @@ def collect_results(query: str, base: str, limit_per_source: int = 5) -> List[Di
                         "title": p.get("title", "Sin título"),
                         "summary": p.get("summary") or "Resumen no disponible",
                         "link": p.get("link", "N/A"),
-                        "citations": "N/A"
+                        "citations": "N/A",
+                        "analyzed":False
                     })
             except Exception as e:
                 print(f"⚠️ Error en ArXiv: {e}")
@@ -28,9 +29,10 @@ def collect_results(query: str, base: str, limit_per_source: int = 5) -> List[Di
                     all_papers.append({
                         "source": "Google Scholar",
                         "title": p.get("title", "Sin título"),
-                    "summary": p.get("snippet") or "Resumen no disponible",
-                    "link": p.get("link", "N/A"),
-                    "citations": p.get("cited_by", 0)
+                        "summary": p.get("snippet") or "Resumen no disponible",
+                        "link": p.get("link", "N/A"),
+                        "citations": p.get("cited_by", 0),
+                        "analyzed":False
                 })
             except Exception as e:
                 print(f"⚠️ Error en Google Scholar: {e}")
@@ -44,7 +46,8 @@ def collect_results(query: str, base: str, limit_per_source: int = 5) -> List[Di
                         "title": p.get("title", "Sin título"),
                         "summary": p.get("abstract") or "Resumen no disponible",
                         "link": p.get("doi", "N/A"),
-                        "citations": p.get("citations", 0)
+                        "citations": p.get("citations", 0),
+                        "analyzed":False
                     })
             except Exception as e:
                 print(f"⚠️ Error en OpenAlex: {e}")
@@ -58,7 +61,8 @@ def collect_results(query: str, base: str, limit_per_source: int = 5) -> List[Di
                         "title": p.get("title", "Sin título"),
                         "summary": p.get("snippet") or "Resumen no disponible",
                         "link": p.get("url", "N/A"),
-                        "citations": "N/A"
+                        "citations": "N/A",
+                        "analyzed":False
                     })
             except Exception as e:
                 print(f"⚠️ Error en Google Web Search: {e}")

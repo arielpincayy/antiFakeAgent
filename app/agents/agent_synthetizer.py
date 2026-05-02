@@ -10,63 +10,63 @@ def agent_synthetizer(agent: Agents, analysis: List[Dict[str, Any]], news: str) 
     # Compactar resultados (clave para el LLM)
     formatted_results = "\n\n".join([
         f"""
-        Title: {r.get('title')}
-        Summary: {r.get('summary')}
-        Key Points: {r.get('key_points')}
-        Relevance: {r.get('relevance')}
-        Credibility: {r.get('credibility')}
-        Source: {r.get('source')}
+        Título: {r.get('title')}
+        Resumen: {r.get('summary')}
+        Puntos Clave: {r.get('key_points')}
+        Relevancia: {r.get('relevance')}
+        Credibilidad: {r.get('credibility')}
+        Fuente: {r.get('source')}
         """
         for r in analysis
     ])
 
     prompt = f"""
-    You are a professional fact-checker.
+    Eres un verificador de hechos profesional.
     
-    Your task is to synthesize the analyzed evidence and determine whether the claim is true or false.
+    Tu tarea es sintetizar la evidencia analizada y determinar si la afirmación es verdadera o falsa.
     
-    CLAIM:
+    AFIRMACIÓN:
     {news}
     
-    EVIDENCE:
+    EVIDENCIA:
     {formatted_results}
     
-    INSTRUCTIONS:
-    - Determine if the claim is:
-        TRUE
-        FALSE
-        or UNCERTAIN
-    - Base your decision ONLY on the evidence
-    - Consider:
-        - Agreement between sources
-        - Credibility of sources
-        - Strength of evidence
-    - Do NOT hallucinate information
+    INSTRUCCIONES:
+    - Determina si la afirmación es:
+        VERDADERA
+        FALSA
+        o INCIERTA
+    - Basa tu decisión ÚNICAMENTE en la evidencia proporcionada
+    - Considera:
+        - El grado de acuerdo entre las fuentes
+        - La credibilidad de las fuentes
+        - La solidez de la evidencia
+    - NO inventes información
     
-    OUTPUT FORMAT (Markdown):
+    FORMATO DE SALIDA (Markdown):
     
-    # 🧠 Fact-Check Result
+    # 🧠 Resultado de Verificación
     
-    ## Verdict
-    (TRUE / FALSE / UNCERTAIN)
+    ## Veredicto
+    (VERDADERA / FALSA / INCIERTA)
     
-    ## Explanation
-    (Short paragraph explaining why)
+    ## Explicación
+    (Párrafo corto explicando el porqué)
     
-    ## Key Evidence
-    - Bullet points summarizing strongest evidence
+    ## Evidencia Clave
+    - Puntos clave más relevantes
     
-    ## Source Quality
-    (Brief evaluation of reliability of sources)
+    ## Calidad de las Fuentes
+    (Breve evaluación de la confiabilidad de las fuentes)
     
-    ## Final Confidence
-    (High / Medium / Low)
+    ## Nivel de Confianza
+    (Alto / Medio / Bajo)
     
-    DO NOT write anything outside this format.
+    NO escribas nada fuera de este formato.
     """
 
     response = agent.invoke([
-        {"role": "system", "content": "You are an expert fact-checker and scientific analyst."},
+        {"role": "system", "content": "Eres un experto en verificación de hechos y análisis científico."},
         {"role": "user", "content": prompt}
     ])
 
