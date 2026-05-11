@@ -34,7 +34,7 @@ class ResearchAgent:
         return {'route': new_route}
 
     def generate_queries(self, state: AgentState):
-        queries, entities = self.ner_model.get_queries_and_entities(state["claim"], state["route"])
+        queries, _ = self.ner_model.get_queries_and_entities(state["claim"], state["route"])
         return {'queries': queries, 'query_index': 0}
 
     def summarizer(self, state: AgentState):
